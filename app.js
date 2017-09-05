@@ -5,7 +5,7 @@ const cheerio = require("cheerio")
 
 class VipVideo {
     constructor() {
-        this.host = 'http://api.baiyug.cn/vip_p_0bc2/';
+        this.host = 'http://api.baiyug.cn/vip_p_0bc4/';
         this.PlayPageUrl = this.host + "index.php?url=";
         this.VideoPageUrl = this.host + "url.php"
     }
