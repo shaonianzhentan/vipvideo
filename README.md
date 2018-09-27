@@ -1,3 +1,6 @@
-# 这个不维护了啦，别人的接口可能已经变掉了啦
 # vipvideo
 vip视频解析接口
+
+请一定要使用cnpm install
+
+如果你有梯子，那也可以使用npm install
