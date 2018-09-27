@@ -1,74 +1,43 @@
-const cheerio = require("cheerio")
-    , fetch = require('node-fetch')
-    , FormData = require('form-data')
-    , iconv = require('iconv-lite');
+const puppeteer = require('puppeteer');
 
 class VipVideo {
     constructor() {
-        this.host = 'http://api.baiyug.cn/vip_p_0bc4/';
-        this.PlayPageUrl = this.host + "index.php?url=";
-        this.VideoPageUrl = this.host + "url.php"
     }
-
     geturl(link) {
-
-        var PlayPageUrl = this.PlayPageUrl + link;
-        return new Promise((resolve, reject) => {
-            //获取API解析页面
-            fetch(PlayPageUrl, {
-                headers: {
-                    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-                    Referer: PlayPageUrl
+        return new Promise((resolve, reject) => {             
+            (async () => {
+              //const browser = await puppeteer.launch({headless: false,devtools: true,args:['--disable-web-security']});
+              const browser = await puppeteer.launch({args:['--disable-web-security']});
+              const page = await browser.newPage();
+              
+              page.setUserAgent('Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1');
+              
+              //let link='https://www.mgtv.com/b/325599/4592004.html?cxid=90fe36tp1'
+              console.log(`请求地址：${link}`)
+              await page.goto(`http://yun.baiyug.cn/vip/?url=${link}`);
+              
+              dumpFrameTree(page.mainFrame(), '');
+              //await browser.close();
+            
+              async function dumpFrameTree(frame, indent) {
+                console.log(indent + frame.url());
+                
+                let videoHandle = await frame.$('video')
+                if(videoHandle != null){
+                    let video = await frame.evaluate(v => v.src, videoHandle);
+                    console.log(video)
+                    resolve(video)
+                    await browser.close();
                 }
-            }).then(res => res.text()).then(body => {
-                var $ = cheerio.load(body);
-                try {
-                    var bb = body.match(/\\x\d{2}/g)
-                    for (let i = 0; i < bb.length; i++) {
-                        bb[i] = bb[i].replace('\\x', '0x')
-                    }
-                    var str = iconv.decode(new Buffer(bb), 'win1251');
-                    //console.log(str);
-
-                    var md5str = str.match(/\('([a-z0-9]+)'\)/)[1];
-                    //console.log(md5str);
-
-
-                    var form = new FormData();
-
-                    var args = {
-                        id: link,
-                        type: 'auto',
-                        siteuser: '',
-                        md5: md5str,
-                        hd: '',
-                        lg: ''
-                    }
-
-                    for (var k in args) {
-                        form.append(k, args[k]);
-                    }
-
-                    //获取实际播放地址路径
-                    fetch(this.VideoPageUrl, {
-                        method: 'POST',
-                        body: form,
-                        headers: {
-                            'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1',
-                            Referer: PlayPageUrl
-                        }
-                    }).then(res => res.json()).then(result => {
-                        resolve(result);
-                    }).catch(err => {
-                        reject(err);
-                    });
-
-                } catch (ex) {
-                    reject(ex);
-                }
-            }).catch(err => {
-                reject(err);
-            })
+                
+                for (let child of frame.childFrames())
+                  dumpFrameTree(child, indent + '  ');
+              }    
+              //document.querySelector('iframe').contentWindow.document.querySelector('iframe').contentWindow.document.querySelector('iframe').contentWindow.document.querySelector('video').src
+             
+              //await browser.close();
+            })();
+            //https://v.qq.com/x/cover/fgqtuu38z91hfyw.html&type=qq
         })
 
     }
