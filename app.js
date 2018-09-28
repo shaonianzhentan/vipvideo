@@ -37,7 +37,7 @@ class VipVideo {
                 //document.querySelector('iframe').contentWindow.document.querySelector('iframe').contentWindow.document.querySelector('iframe').contentWindow.document.querySelector('video').src
 
                 //超时30秒
-                setTimeout(() => {
+                setTimeout(async () => {
                     if (browser != null) {
                         await browser.close();
                         reject('请求超时')
