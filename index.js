@@ -19,10 +19,10 @@ app.use(async ctx => {
         msg: `获取到数据`
       }
     } catch (ex) {
-      console.error('错误信息：', err)
+      console.error('错误信息：', ex)
       ctx.body = {
         code: 1,
-        msg: `错误信息：${err}`
+        msg: `错误信息：${ex}`
       }
     }
   } else {
