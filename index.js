@@ -1,10 +1,7 @@
 const Koa = require('koa');
-var cors = require('koa2-cors');
 const app = new Koa();
-app.use(cors());
 
-
-var vipvideo = require('./app')
+const VipVideo = require('./lib/VipVideo')
 
 app.use(async ctx => {
   let body = {
@@ -14,7 +11,7 @@ app.use(async ctx => {
   let link = ctx.query.url
   if (link) {
     try {
-      let data = await vipvideo.geturl(link)
+      let data = await VipVideo(link)
       //console.log(data)
       ctx.body = {
         code: 0,
@@ -36,5 +33,5 @@ app.use(async ctx => {
   }
 });
 
-app.listen(3000);
-console.log(`>listen：3000`)
+app.listen(2226);
+console.log(`>listen：2226`)

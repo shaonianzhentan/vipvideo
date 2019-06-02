@@ -1,7 +1,7 @@
 var vipvideo = require('./app')
 
 
-var link = 'http://v.youku.com/v_show/id_XMjk2MTUwNDUyOA==.html';
+var link = 'https://www.mgtv.com/b/328724/5723664.html?fpa=se';
 
 vipvideo.geturl(link).then(data => {
     console.log(data)
