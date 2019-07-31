@@ -1,7 +1,7 @@
 var VipVideo = require('./lib/VipVideo')
 
 
-var link = 'https://www.mgtv.com/b/328724/5723664.html?fpa=se';
+var link = 'https://www.mgtv.com/b/329499/6103746.html';
 
 VipVideo(link).then(data => {
     console.log(data)
